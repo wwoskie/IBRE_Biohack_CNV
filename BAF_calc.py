@@ -94,5 +94,5 @@ pileup_hetero.loc[:, "copy_num"] = pileup_hetero["baf_tum"].apply(calc_copy_num)
 result_df = calc_cn_gene(interest_genes)
 
 # data/pileup.txt
-# data/interesting_genes.bed
-# data/BAF_output.txt
+# interesting_genes.bed
+# BAF_output.txt
