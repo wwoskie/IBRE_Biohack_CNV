@@ -67,10 +67,43 @@ This module comprises three main functions:
 
 This module takes `.bed`-like file in `.tsv` format with gene names and coordinates and creates dataframe from it. Then it accepts '.bam` files from tumor and normal tissue. After processing it creates `.bam` file subset of data plus border shift (can be passed as a parameter). After that it calculates bins, rolling median, depth-ratio and copy number data along with median rolling depth-ratio and binning graph output.
 
- 
- 
+## Calculation gene copy number using BAF values
 
-## Future perspective:
+Python script [BAF_calc.py](./BAF_calc.py) is used for calculation copy numbers for genes of interest. It uses output from [FACETS](https://github.com/mskcc/facets) algorithm with SNP coverage). To run this script, you need **two files**:
+
+1) pileup.txt: output from FACETS with SNP coverage;
+2) .bed file: with genome coordinates for gene of interest
+
+Arguments:
+
+```
+-c, --cov: path to FACETS pileup file;
+-b, --bed-genes: path to .bed file with genes of interest coordinates;
+-o, --output: path for output 
+```  
+
+Here is the example command for running this script:
+
+```
+python3 BAF_calc.py --cov data/sample1_pileup.txt 
+		    --bed-genes interesting_genes.bed 
+		    --output sample1_BAF.txt
+```
+
+The output will be generated in this format:
+
+| gene | copy_num_mean | n |
+|--------------|:-------:|:--------:|
+| ERBB2 | - | 0 |
+| BRCA1	| 5 | 8 |
+| BRCA2	| 2 | 2 |
+| CHEK1	| 1 | 1 |
+| CHEK2	| - | 0 |
+| EGFR	| 18 | 2 |
+| ... | ... | ... |
+
+## Future perspectives:
+
 - Add GC correction
 - Add correction for lower coverage on sides of targets
 - Find ways for more precise copy number estimation
