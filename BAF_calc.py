@@ -42,7 +42,7 @@ def calc_copy_num(baf_tum):
     if baf_tum == "-":
         return "-"
     elif 0 < baf_tum < 1:
-        copy_num = 2 * abs(np.log2(baf_tum / (1 - baf_tum))) + 1
+        copy_num = 2 ** abs(np.log2(baf_tum / (1 - baf_tum))) + 1
         return round(copy_num)
     else:
         return 1
