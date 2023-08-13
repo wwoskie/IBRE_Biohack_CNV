@@ -106,7 +106,7 @@ def main(fetch_df_path,
     # counting CNVs
     df_group_cnv = df_total[['position', 'median_rolling_binning_depth_ratio', 'gene_tumor']].groupby(['gene_tumor'])['median_rolling_binning_depth_ratio'].median()
     df_group_cnv = df_group_cnv.reset_index()
-    df_group_cnv['copy_num'] =  2 ** df_group_cnv['median_rolling_binning_depth_ratio']
+    df_group_cnv['copy_num'] =  2 ** (df_group_cnv['median_rolling_binning_depth_ratio'] + 1)
     df_group_cnv_median = df_group_cnv['copy_num'].median()
     df_group_cnv['copy_num_corrected'] = round_25(df_group_cnv['copy_num']/df_group_cnv_median)
     df_group_cnv.to_csv(f'{path_to_result}/result.tsv', sep='\t', index=None)
