@@ -67,6 +67,18 @@ This module comprises three main functions:
 
 This module takes `.bed`-like file in `.tsv` format with gene names and coordinates and creates dataframe from it. Then it accepts '.bam` files from tumor and normal tissue. After processing it creates `.bam` file subset of data plus border shift (can be passed as a parameter). After that it calculates bins, rolling median, depth-ratio and copy number data along with median rolling depth-ratio and binning graph output.
 
+## Pulling data from cnvKit output
+We recomend to use `pull_cnv.ipynb` for pulling of segments of interest.  
+*Comand line implementation is under development*
+
+Arguments are assigned with keyborf inpu.
+
+Arguments:
+- path to .cns outpu of cnvKit.
+- path to .bed with genes of interest.
+
+Script plots log2 depth ratios for given area and prints dictionary with called copynumbers for corresponding genes.
+
 ## Calculation gene copy number using BAF values
 
 Python script [BAF_calc.py](./BAF_calc/BAF_calc.py) is used for calculation copy numbers for genes of interest. It uses output from [FACETS](https://github.com/mskcc/facets) algorithm with SNP coverage). To run this script, you need **two files**:
