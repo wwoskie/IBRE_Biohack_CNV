@@ -49,15 +49,21 @@ def binner(seq_length,
     bins = np.concatenate([([i]*bin_size) for i in along], axis=0)[:seq_length]
     return bins
 
-def main(fetch_df,
+def main(fetch_df_path,
+         samfile_normal,
+         samfile_tumor,
+         genes_bam_normal,
+         genes_bam_tumor,
+         bin_size = 5000,
          rolling_window = 10000):
     
-    fetch_df = pd.read_csv('interesting_genes.bed', sep='\t', header=None, names=['chr', 'start', 'stop', 'gene'])
-    rolling_window = rolling_window
-    bin_size = 5000
     
-    df_normal = genes_extractor('../WES-normal.bam', genes_bam='../genes.bam')
-    df_tumor = genes_extractor('../WES-tumor.bam', genes_bam='../genes_tumor.bam')
+    rolling_window = rolling_window
+    bin_size = bin_size
+    fetch_df = pd.read_csv(fetch_df_path, sep='\t', header=None, names=['chr', 'start', 'stop', 'gene'])
+    
+    df_normal = genes_extractor(samfile_normal, genes_bam=genes_bam_normal)
+    df_tumor = genes_extractor(samfile_tumor, genes_bam=genes_bam_tumor)
     
     # merging tumor and normal data
     df_total = df_tumor.merge(df_normal, left_on='position', right_on='position',
@@ -65,7 +71,7 @@ def main(fetch_df,
     
     # counting depth ratio and median rolling
     df_total['depth_ratio'] = np.log2(df_total['read_count_tumor'] / df_total['read_count_normal'])
-    df_total['median_rolling_depth_ratio'] = df_total['depth_ratio'].rolling(rolling_window, min_periods=1, center=True).median(skipna=False)
+    df_total['median_rolling_depth_ratio'] = df_total['depth_ratio'].rolling(rolling_window, min_periods=1, center=True).median()
     
     # binning
     bins = binner(df_total.shape[0], 
