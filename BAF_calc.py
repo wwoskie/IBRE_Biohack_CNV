@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+import argparse
+
 import numpy as np
 import pandas as pd
 
@@ -51,7 +53,7 @@ def calc_cn_gene(interest_genes_df):
     '''
     
     
-    result = pd.DataFrame({"gene": [], "BAF_copy_num": []})
+    result = pd.DataFrame({"gene": [], "copy_num_mean": [], "n": []})
     for i in range(interest_genes.shape[0]):
         chrom, start, stop, gene = interest_genes.loc[i, :]
         result.loc[i, "gene"] = gene
@@ -61,24 +63,37 @@ def calc_cn_gene(interest_genes_df):
         ]
         subset = subset[subset["copy_num"] != "-"]
         result.loc[i, "copy_num_mean"] = subset["copy_num"].mean()
+        result.loc[i, "n"] = subset["copy_num"].shape[0]
         result.replace(np.nan, "-", inplace=True)
+    result.to_csv(args.output, sep="\t", index=False)
     return result
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c", "--cov", help="path to FACETS pileup file")
+    parser.add_argument("-b", "--bed-genes", help="path to .bed file with genes of interest")
+    parser.add_argument("-o", "--output", help="path for output")
+    args = parser.parse_args()
     
-    
-# reading file with SNP coverage for normal and tumor sample (FASECTS output)    
-pileup = pd.read_csv(args.cov)
-# reading .bed file with genes of interest
-interest_genes = pd.read_csv(args.bed_genes, sep="\t", names=["chr", "start", "stop", "gene"])
+    # reading file with SNP coverage for normal and tumor sample (FASECTS output)    
+    pileup = pd.read_csv(args.cov)
+    # reading .bed file with genes of interest
+    interest_genes = pd.read_csv(args.bed_genes, sep="\t", names=["chr", "start", "stop", "gene"])
 
-# filtering heterozygous variants
-pileup_hetero = pileup[(pileup["File1R"] != 0) & (pileup["File1A"] != 0)]
-pileup_hetero = pileup_hetero[abs(np.log2(pileup_hetero["File1R"] / pileup_hetero["File1A"])) <= 0.322]
+    # filtering heterozygous variants
+    pileup_hetero = pileup[(pileup["File1R"] != 0) & (pileup["File1A"] != 0)]
+    pileup_hetero = pileup_hetero[abs(np.log2(pileup_hetero["File1R"] / pileup_hetero["File1A"])) <= 0.322]
 
-# calculating BAF values for normal and tumor sample
-pileup_hetero.loc[:, "baf_contr"] = pileup_hetero.apply(lambda x: calc_baf(x["File1R"], x["File1A"]), axis=1)
-pileup_hetero.loc[:, "baf_tum"] = pileup_hetero.apply(lambda x: calc_baf(x["File2R"], x["File2A"]), axis=1)
+    # calculating BAF values for normal and tumor sample
+    pileup_hetero.loc[:, "baf_contr"] = pileup_hetero.apply(lambda x: calc_baf(x["File1R"], x["File1A"]), axis=1)
+    pileup_hetero.loc[:, "baf_tum"] = pileup_hetero.apply(lambda x: calc_baf(x["File2R"], x["File2A"]), axis=1)
 
-# calculating copy number for tumor sample based on BAF
-pileup_hetero.loc[:, "copy_num"] = pileup_hetero["baf_tum"].apply(calc_copy_num)
+    # calculating copy number for tumor sample based on BAF
+    pileup_hetero.loc[:, "copy_num"] = pileup_hetero["baf_tum"].apply(calc_copy_num)
 
-result_df = calc_cn_gene(interest_genes)
+    result_df = calc_cn_gene(interest_genes)
+
+# data/pileup.txt
+# data/interesting_genes.bed
+# data/BAF_output.txt
