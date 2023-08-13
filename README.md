@@ -25,6 +25,23 @@ Gains and losses of DNA are prevalent in cancer and emerge as a consequence of i
 
 Coverage of certain area in tumor divided by coverage of same area in control provides info about change in copy number of this area. In real life this ratio is also needs to be corrected with GC-content correction, purity/ploidy correction and some other corrections.
 
+## Usage:
+
+This instrument can be used in two different modes:
+
+- python-notebook format
+- as a library via `import` command
+
+Both instruments require the following packages:
+
+- `pysam`
+- `pandas`
+- `matplotlib`
+- `numpy`
+- `seaborn`
+
+We strongly suggest installing these packages via `conda install <package_name>` command. You can install conda following guide on [this](https://www.anaconda.com/) site. 
+
 ## Future perspective:
 - Add GC correction
 - Add correction for lower coverage on sides of targets
