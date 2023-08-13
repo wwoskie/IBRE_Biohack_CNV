@@ -45,11 +45,11 @@ We strongly suggest installing these packages via `conda install <package_name>`
 ### Input data
 
 This tool uses the following data for input:
-- patient's normal tissue WES ~.bam~-file
-- patients tumor tissue WES ~.bam~-file
-- [*optionally*]  ~.bam.bai~ index files for both tumor and normal, the tool though can generate them automatically if not present
+- patient's normal tissue WES `.bam`-file
+- patients tumor tissue WES `.bam`-file
+- [*optionally*]  `.bam.bai` index files for both tumor and normal, the tool though can generate them automatically if not present
 - ['CNV-kit'](https://cnvkit.readthedocs.io/en/stable/) output
-- FACET output
+- FACETS output
 
 ### Tool structure
 
@@ -61,7 +61,7 @@ This tool consists of three parts:
 #### Focal events module
 
 This module comprises three main functions:
-- `gene_extractor~ - used to process input ~.bam~ files
+- `gene_extractor` - used to process input `.bam` files
 - `binner` - to create data bins for future analisys
 - `main` function to handle input data, process intermediates and manage the above two fuctions
 
@@ -69,7 +69,7 @@ This module takes `.bed`-like file in `.tsv` format with gene names and coordina
 
 ## Calculation gene copy number using BAF values
 
-Python script [BAF_calc.py](./BAF_calc.py) is used for calculation copy numbers for genes of interest. It uses output from [FACETS](https://github.com/mskcc/facets) algorithm with SNP coverage). To run this script, you need **two files**:
+Python script [BAF_calc.py](./BAF_calc/BAF_calc.py) is used for calculation copy numbers for genes of interest. It uses output from [FACETS](https://github.com/mskcc/facets) algorithm with SNP coverage). To run this script, you need **two files**:
 
 1) pileup.txt: output from FACETS with SNP coverage;
 2) .bed file: with genome coordinates for gene of interest
